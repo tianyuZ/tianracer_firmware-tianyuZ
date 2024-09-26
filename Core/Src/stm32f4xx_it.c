@@ -22,7 +22,8 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "dbus_task.h"
+//#include "dbus_task.h"
+#include "sbus_task.h"
 #include "protocol_task.h"
 #include "string.h"
 /* USER CODE END Includes */
@@ -285,18 +286,20 @@ void USART3_IRQHandler(void)
     UNUSED(temp);
     HAL_UART_AbortReceive(&huart3);
 
-    DbusMsg_t *pDbusMsg = osMailAlloc(DbusMail, 0);
-    if (pDbusMsg == NULL)
-    {
-      //error
+    if (SbusBuff[0] == 0x0F && SbusBuff[24] == 0x00) {
+      SbusMsg_t *pSbusMsg = osMailAlloc(SbusMail, 0);
+      if (pSbusMsg == NULL)
+      {
+        //error
+      }
+      else
+      {
+        pSbusMsg->MsgLen = SBUS_MSG_LEN - huart3.hdmarx->Instance->NDTR;
+        memcpy(pSbusMsg->Msg, SbusBuff, pSbusMsg->MsgLen);
+        osMailPut(SbusMail, pSbusMsg);
+      }
     }
-    else
-    {
-      pDbusMsg->MsgLen = DBUS_MSG_LEN - huart3.hdmarx->Instance->NDTR;
-      memcpy(pDbusMsg->Msg, DbusBuff, pDbusMsg->MsgLen);
-      osMailPut(DbusMail, pDbusMsg);
-      HAL_UART_Receive_DMA(&huart3, DbusBuff, DBUS_MSG_LEN);
-    }
+    HAL_UART_Receive_DMA(&huart3, SbusBuff, SBUS_MSG_LEN);
   }
   /* USER CODE END USART3_IRQn 1 */
 }

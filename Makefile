@@ -51,8 +51,8 @@ Core/Src/param.c \
 Core/Src/pid.c \
 Core/Src/protocol_task.c \
 Core/Src/racecar_task.c \
-Core/Src/dbus_task.c \
-Core/Src/dbus.c \
+Core/Src/sbus_task.c \
+Core/Src/sbus.c \
 Core/Src/beep.c \
 Core/Src/beep_task.c \
 Core/Src/debug_cmd.c \

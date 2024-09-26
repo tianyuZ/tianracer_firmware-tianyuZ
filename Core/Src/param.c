@@ -20,10 +20,10 @@
 const Param_t DefaultParam = {
   PARAM_HEAD,
   0.033,//wheel_r
-  7.6,//motor_reduction_ratio
+  5.067,//motor_reduction_ratio
   PI,//max_w
   4.5,//max_speed
-  {0.087, 0.13, 17, 30},//{base_a, base_b, pwm_dead_zone, max_steer_angle}
+  {0.087, 0.1275, 17, 30},//{base_a, base_b, pwm_dead_zone, max_steer_angle}
   {100, 10, 3, 500.0, 500.0},//p i d max_output i_limit
   4096,//tick per lap
   65536,//max ticks

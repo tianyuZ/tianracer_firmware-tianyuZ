@@ -1,7 +1,9 @@
 #include "racecar_task.h"
 #include "cmsis_os.h"
-#include "dbus.h"
-#include "dbus_task.h"
+//#include "dbus.h"
+//#include "dbus_task.h"
+#include "sbus.h"
+#include "sbus_task.h"
 #include "param.h"
 #include "tim.h"
 #include "protocol_task.h"
@@ -58,28 +60,31 @@ static void RacecarCtrlTaskEntry(void const *argument)
       timeout = 0;
       p = evt.value.p;
       steering = p->steering_angle;
-      v = p->vx;
+//      v = p->vx;
+      motorPwm = p->motor_pwm;
 
-      motorPwm = PidCalc(&MotorPid, motor_v, v);
+//      motorPwm = PidCalc(&MotorPid, motor_v, v);
       steering += 90;
 
       //skip dead zone
-      if (motorPwm < 0)
-      {
-        motorPwm -= param.racecar.pwm_dead_zone;
-      }
-      else if (motorPwm > 0)
-      {
-        motorPwm += param.racecar.pwm_dead_zone;
-      }
+//      if (motorPwm < 0)
+//      {
+//        motorPwm -= param.racecar.pwm_dead_zone;
+//      }
+//      else if (motorPwm > 0)
+//      {
+//        motorPwm += param.racecar.pwm_dead_zone;
+//      }
 
-      if (v == 0)
-      {
-        motorPwm = 0;
-        PidInit(&MotorPid, POSITION_PID, param.pid.max_out, param.pid.i_limit, param.pid.p, param.pid.i, param.pid.d);
-      }
+//      if (v == 0)
+//      {
+//        motorPwm = 0;
+//        PidInit(&MotorPid, POSITION_PID, param.pid.max_out, param.pid.i_limit, param.pid.p, param.pid.i, param.pid.d);
+//      }
 
-      TIM1->CCR1 = LIMIT(MOTOR_CAL(motorPwm), MOTOR_MIN, MOTOR_MAX);
+//      TIM1->CCR1 = LIMIT(MOTOR_CAL(motorPwm), MOTOR_MIN, MOTOR_MAX);
+//      ProtocolSend(PACK_TYPE_MOTOR_PWM_RESPONSE, (uint8_t *)&motorPwm, sizeof(int));
+      TIM1->CCR1 = LIMIT(motorPwm, MOTOR_MIN, MOTOR_MAX);
       TIM1->CCR2 = LIMIT(SERVO_CAL(steering), SERVO_CAL(MID_STEER_ANGLE - param.racecar.max_steer_angle), SERVO_CAL(MID_STEER_ANGLE + param.racecar.max_steer_angle));
       osMailFree(CtrlMail, p);
     }
@@ -92,23 +97,25 @@ static void RacecarCtrlTaskEntry(void const *argument)
         steering = RACECAR_STEER_ANGLE_ZERO;
         timeout = 0;
       }
-      motorPwm = PidCalc(&MotorPid, motor_v, v);
+//      motorPwm = PidCalc(&MotorPid, motor_v, v);
+      motorPwm = RACECAR_SPEED_ZERO;
       //skip dead zone
-      if (motorPwm < 0)
-      {
-        motorPwm -= param.racecar.pwm_dead_zone;
-      }
-      else if (motorPwm > 0)
-      {
-        motorPwm += param.racecar.pwm_dead_zone;
-      }
+//      if (motorPwm < 0)
+//      {
+//        motorPwm -= param.racecar.pwm_dead_zone;
+//      }
+//      else if (motorPwm > 0)
+//      {
+//        motorPwm += param.racecar.pwm_dead_zone;
+//      }
+//
+//      if (v == 0)
+//      {
+//        motorPwm = 0;
+//      }
 
-      if (v == 0)
-      {
-        motorPwm = 0;
-      }
-
-      TIM1->CCR1 = LIMIT(MOTOR_CAL(motorPwm), MOTOR_MIN, MOTOR_MAX);
+//      TIM1->CCR1 = LIMIT(MOTOR_CAL(motorPwm), MOTOR_MIN, MOTOR_MAX);
+      TIM1->CCR1 = LIMIT(motorPwm, MOTOR_MIN, MOTOR_MAX);
       TIM1->CCR2 = LIMIT(SERVO_CAL(steering), SERVO_CAL(MID_STEER_ANGLE - param.racecar.max_steer_angle), SERVO_CAL(MID_STEER_ANGLE + param.racecar.max_steer_angle));
     }
   }

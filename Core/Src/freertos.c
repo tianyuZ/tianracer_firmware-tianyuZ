@@ -26,7 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "param.h" 
-#include "dbus_task.h"
+//#include "dbus_task.h"
+#include "sbus_task.h"
 #include "racecar_task.h"
 #include "protocol_task.h"
 #include "imu_task.h"
@@ -88,7 +89,8 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
   BeepTaskInit();
-  DbusTaskInit();
+//  DbusTaskInit();
+  SbusTaskInit();
   ProtocolTaskInit();
   ImuTaskInit();
   RacecarTaskInit();

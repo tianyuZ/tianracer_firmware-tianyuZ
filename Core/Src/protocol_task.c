@@ -1,13 +1,16 @@
 #include "protocol_task.h"
 #include "cmsis_os.h"
-#include "dbus_task.h"
+//#include "dbus_task.h"
+#include "sbus_task.h"
 #include "beep_task.h"
 #include "param.h"
 #include "usart.h"
-#include "dbus.h"
+//#include "dbus.h"
+#include "sbus.h"
 #include "stdlib.h"
 #include "string.h"
 #include "usbd_cdc_if.h"
+#include "racecar_task.h"
 osMailQId ProtocolRxMail;
 osMailQId ProtocolTxMail;
 osMailQDef(ProtocolRxMail, PROTOCOL_MSG_QUENE_SIZE, struct ProtocolMsg);
@@ -255,6 +258,7 @@ static void ProtocolRecvTaskEntry(void const *argument)
           pMotionData->vy = 0;
           pMotionData->w = 0;
           pMotionData->steering_angle = 0;
+          pMotionData->motor_pwm = RACECAR_SPEED_ZERO;
           osMailPut(CtrlMail, pMotionData);
         }
       }
